@@ -15,7 +15,7 @@ class BeerClientImplTest {
     BeerClient beerClient;
 
     @Test
-    void testListBeers() throws InterruptedException {
+    void testListBeers() {
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
         beerClient.listBeers().subscribe(response -> {
@@ -28,7 +28,7 @@ class BeerClientImplTest {
     }
 
     @Test
-    void testListBeersMap() throws InterruptedException {
+    void testListBeersMap() {
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
         beerClient.listBeersMap().subscribe(response -> {
@@ -40,11 +40,23 @@ class BeerClientImplTest {
     }
 
     @Test
-    void testListBeersJsonNode() throws InterruptedException {
+    void testListBeersJsonNode() {
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
         beerClient.listBeersJsonNode().subscribe(jsonNode -> {
             System.out.println(jsonNode.toPrettyString());
+            atomicBoolean.set(true);
+        });
+
+        await().untilTrue(atomicBoolean);
+    }
+
+    @Test
+    void testListBeersDTO() {
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        beerClient.listBeersDto().subscribe(beerDto -> {
+            System.out.println(beerDto.getBeerName());
             atomicBoolean.set(true);
         });
 
