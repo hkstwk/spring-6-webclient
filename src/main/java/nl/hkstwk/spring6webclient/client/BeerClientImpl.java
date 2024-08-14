@@ -5,11 +5,15 @@ import nl.hkstwk.spring6webclient.model.BeerDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
 @Service
 public class BeerClientImpl implements BeerClient {
+
+    public static final String BEER_PATH = "/api/v3/beer";
+    public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
     private final WebClient webClient;
 
@@ -19,25 +23,34 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public Flux<String> listBeers() {
-        return webClient.get().uri("/api/v3/beer", String.class)
+        return webClient.get().uri(BEER_PATH, String.class)
                 .retrieve().bodyToFlux(String.class);
     }
 
     @Override
     public Flux<Map> listBeersMap() {
-        return webClient.get().uri("/api/v3/beer", Map.class)
+        return webClient.get().uri(BEER_PATH, Map.class)
                 .retrieve().bodyToFlux(Map.class);
     }
 
     @Override
     public Flux<JsonNode> listBeersJsonNode() {
-        return webClient.get().uri("/api/v3/beer", JsonNode.class)
+        return webClient.get().uri(BEER_PATH, JsonNode.class)
                 .retrieve().bodyToFlux(JsonNode.class);
     }
 
     @Override
     public Flux<BeerDTO> listBeersDto() {
-        return webClient.get().uri("/api/v3/beer", BeerDTO.class)
+        return webClient.get().uri(BEER_PATH, BeerDTO.class)
                 .retrieve().bodyToFlux(BeerDTO.class);
+    }
+
+    @Override
+    public Mono<BeerDTO> getBeerById(String beerId) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(BEER_PATH_ID)
+                        .build(beerId))
+                .retrieve()
+                .bodyToMono(BeerDTO.class);
     }
 }
