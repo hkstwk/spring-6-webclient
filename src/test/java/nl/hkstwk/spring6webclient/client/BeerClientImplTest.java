@@ -130,4 +130,28 @@ class BeerClientImplTest {
 
         await().untilTrue(atomicBoolean);
     }
+
+    @Test
+    void testPatchBeer() {
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        BeerDTO patchDTO = BeerDTO.builder()
+                .beerName("Leffe patch")
+                .beerStyle("Blond patch")
+                .build();
+
+        beerClient.listBeersDto()
+                .next()
+                .doOnNext(beerDTO -> {
+                    beerDTO.setBeerName(patchDTO.getBeerName());
+                    beerDTO.setBeerStyle(patchDTO.getBeerStyle());
+                })
+                .flatMap(beerDTO -> beerClient.patchBeer(beerDTO))
+                .subscribe(byIdDTO -> {
+                    System.out.println(byIdDTO.toString());
+                    atomicBoolean.set(true);
+                });
+
+        await().untilTrue(atomicBoolean);
+    }
 }
