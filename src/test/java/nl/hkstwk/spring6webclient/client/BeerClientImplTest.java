@@ -1,9 +1,11 @@
 package nl.hkstwk.spring6webclient.client;
 
+import nl.hkstwk.spring6webclient.model.BeerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.awaitility.Awaitility.await;
@@ -82,6 +84,27 @@ class BeerClientImplTest {
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
         beerClient.getBeerByStyle("Pale Ale")
+                .subscribe(dto -> {
+                    System.out.println(dto.toString());
+                    atomicBoolean.set(true);
+                });
+
+        await().untilTrue(atomicBoolean);
+    }
+
+    @Test
+    void testCreateBeer() {
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        BeerDTO newDTO = BeerDTO.builder()
+                .beerName("Karmeliet")
+                .beerStyle("Triple")
+                .quantityOnHand(250)
+                .upc("abc123")
+                .price(BigDecimal.valueOf(10.99))
+                .build();
+
+        beerClient.createBeer(newDTO)
                 .subscribe(dto -> {
                     System.out.println(dto.toString());
                     atomicBoolean.set(true);
